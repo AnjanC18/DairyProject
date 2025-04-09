@@ -1,29 +1,21 @@
-# Use secure and compatible base image
 FROM python:3.9.18-slim-bullseye
 
-# Set working directory
 WORKDIR /app
 
-# Copy all project files into the container
-COPY . /app
+# Copy only requirement file first to use Docker layer cache
+COPY requirements.txt .
 
-# Install system dependencies required by reportlab and other packages
+# Install system + Python dependencies
 RUN apt-get update && apt-get install -y \
-    gcc \
-    libffi-dev \
-    libfreetype6-dev \
-    libjpeg-dev \
-    zlib1g-dev \
-    python3-dev \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+    gcc libffi-dev libfreetype6-dev libjpeg-dev zlib1g-dev \
+    python3-dev build-essential \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
-# Install Python dependencies
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
+# THEN copy the rest of the app
+COPY . .
 
-# Expose the Flask port
 EXPOSE 5000
 
-# Command to run the Flask app
 CMD ["python", "app.py"]
