@@ -1,29 +1,47 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = 'dairy-management'
+    }
+
     stages {
-        stage('Clone Repo') {
+        stage('Checkout Code') {
             steps {
-                echo 'Cloning the repo...'
+                git 'https://github.com/your-username/your-repo.git'  // Replace with your repo
             }
         }
+
         stage('Install Dependencies') {
             steps {
-                echo 'Installing dependencies...'
-                sh 'python3 -m pip install -r requirements.txt'
+                sh 'python -m pip install --upgrade pip'
+                sh 'pip install -r requirements.txt'
             }
         }
-        stage('Run App') {
+
+        stage('Build Docker Image') {
             steps {
-                echo 'Running the app...'
-                sh 'python3 app.py'
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
-        stage('Test') {
+
+        stage('Run Container') {
             steps {
-                echo 'Running tests...'
-                // Add test commands here
+                sh 'docker run -d -p 5000:5000 --name flask_app $IMAGE_NAME'
             }
+        }
+
+        stage('Test App') {
+            steps {
+                echo "You can add integration or health check tests here."
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up...'
+            sh 'docker rm -f flask_app || true'
         }
     }
 }
