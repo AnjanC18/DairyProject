@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.10'
-        }
-    }
+    agent any
 
     stages {
         stage('Clone Repo') {
@@ -14,19 +10,19 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'pip install -r requirements.txt'
+                sh 'python3 -m pip install -r requirements.txt'
             }
         }
         stage('Run App') {
             steps {
                 echo 'Running the app...'
-                sh 'python app.py'
+                sh 'python3 app.py'
             }
         }
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                // Add your test command here
+                // Add test commands here
             }
         }
     }
