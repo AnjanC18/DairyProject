@@ -13,9 +13,9 @@ pipeline {
             }
         }
 
-        stage('Run App and Show Output') {
+        stage('Run Flask App in Foreground') {
             steps {
-                echo '🚀 Running app in foreground (Flask output will be shown below)...'
+                echo '🚀 Running Flask app — output below will look just like VS Code...'
                 sh 'docker run --rm -p 5000:5000 $IMAGE_NAME'
             }
         }
@@ -23,7 +23,7 @@ pipeline {
 
     post {
         always {
-            echo '✅ Pipeline finished. Visit http://localhost:5000 to view your app if it’s still running.'
+            echo '✅ Build finished. Visit http://localhost:5000 while it’s running.'
         }
     }
 }
