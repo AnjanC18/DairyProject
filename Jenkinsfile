@@ -8,26 +8,22 @@ pipeline {
     stages {
         stage('Build Docker Image') {
             steps {
+                echo '🔨 Building Docker image...'
                 sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Run App and Show Output') {
             steps {
-                sh 'docker run -d -p 5000:5000 --name dairy-app $IMAGE_NAME'
-            }
-        }
-
-        stage('Health Check') {
-            steps {
-                sh 'sleep 5 && curl -f http://localhost:5000 || echo "App not responding"'
+                echo '🚀 Running app in foreground (Flask output will be shown below)...'
+                sh 'docker run --rm -p 5000:5000 $IMAGE_NAME'
             }
         }
     }
 
     post {
         always {
-            sh 'docker rm -f dairy-app || true'
+            echo '✅ Pipeline finished. Visit http://localhost:5000 to view your app if it’s still running.'
         }
     }
 }
