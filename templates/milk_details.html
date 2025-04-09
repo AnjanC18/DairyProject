@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Milk Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        function enableEdit(rowId) {
+            let priceInput = document.getElementById(`price-${rowId}`);
+            let saveButton = document.getElementById(`save-${rowId}`);
+            let editButton = document.getElementById(`edit-${rowId}`);
+            
+            priceInput.disabled = false;
+            saveButton.style.display = "inline-block";
+            editButton.style.display = "none";
+        }
+
+        function validateEdit(rowId) {
+            let priceInput = document.getElementById(`price-${rowId}`);
+            if (priceInput.disabled) {
+                alert("Click on Edit first to change the price.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Milk Details</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'danger' else 'success' }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Milk ID</th>
+                        <th>Milk Type</th>
+                        <th>Price (₹ per liter)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for milk in milk_records %}
+                    <tr>
+                        <td>{{ milk.id }}</td>
+                        <td>{{ milk.milk_type }}</td>
+                        <td>
+                            <form method="POST" onsubmit="return validateEdit('{{ milk.id }}')">
+                                <input type="hidden" name="milk_id" value="{{ milk.id }}">
+                                <input type="number" step="0.01" name="new_price" 
+                                       id="price-{{ milk.id }}" value="{{ milk.price }}" 
+                                       min="1" required disabled class="form-control">
+                                <button type="button" id="edit-{{ milk.id }}" 
+                                        onclick="enableEdit('{{ milk.id }}')" class="btn btn-sm btn-gold">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button type="submit" id="save-{{ milk.id }}" 
+                                        style="display: none;" class="btn btn-sm btn-success">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            {% if loop.last %}
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-door-open"></i> Exit
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

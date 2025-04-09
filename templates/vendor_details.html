@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Vendor Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Vendor Details</h1>
+        <form method="POST">
+            <label>Name:</label>
+            <input type="text" name="name" required>
+            <label>Contact Number:</label>
+            <input type="text" name="contact" pattern="[5-9][0-9]{9}" required>
+            <button type="submit">Save</button>
+        </form>
+
+        <table>
+            <tr>
+                <th>Vendor ID</th>
+                <th>Name</th>
+                <th>Contact</th>
+            </tr>
+            {% for vendor in vendors %}
+            <tr>
+                <td>{{ vendor.id }}</td>
+                <td>{{ vendor.name }}</td>
+                <td>{{ vendor.contact }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <button onclick="location.href='/dashboard'">Exit</button>
+    </div>
+</body>
+</html>

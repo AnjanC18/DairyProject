@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Success</title>
+    <script>
+        function redirectToDashboard() {
+            window.location.href = "/dashboard";
+        }
+    </script>
+</head>
+<body onload="setTimeout(redirectToDashboard, 2000)"> <!-- Redirect after 2 seconds -->
+    <div class="dialog-box">
+        <h2>Login Successful!</h2>
+        <p>Redirecting to dashboard...</p>
+    </div>
+</body>
+</html>

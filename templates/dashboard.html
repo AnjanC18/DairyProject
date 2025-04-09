@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dairy Management Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Welcome, {{ session['user'] }}</h1>
+            <p class="subtitle">Dairy Management System</p>
+        </div>
+        
+        <div class="dashboard-cards">
+            <a href="{{ url_for('milk_details') }}" class="dashboard-card">
+                <i class="fas fa-warehouse"></i>
+                <h3>Milk Inventory</h3>
+                <p>Manage milk types and pricing</p>
+            </a>
+            
+            <a href="{{ url_for('vendor_details') }}" class="dashboard-card">
+                <i class="fas fa-users"></i>
+                <h3>Vendors</h3>
+                <p>Manage vendor information</p>
+            </a>
+            
+            <a href="{{ url_for('bill') }}" class="dashboard-card">
+                <i class="fas fa-file-invoice"></i>
+                <h3>Generate Bill</h3>
+                <p>Create new milk purchase bills</p>
+            </a>
+            
+            <a href="{{ url_for('bill_details') }}" class="dashboard-card">
+                <i class="fas fa-search"></i>
+                <h3>Bill History</h3>
+                <p>View and search past bills</p>
+            </a>
+        </div>
+        
+        <div class="quick-stats">
+            <div class="stat-card">
+                <i class="fas fa-cow"></i>
+                <div class="stat-value">3</div>
+                <div class="stat-label">Milk Types</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-user-tie"></i>
+                <div class="stat-value">{{ vendor_count }}</div>
+                <div class="stat-label">Vendors</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-file-alt"></i>
+                <div class="stat-value">{{ bill_count }}</div>
+                <div class="stat-label">Bills Today</div>
+            </div>
+        </div>
+        
+        <div class="logout-section">
+            <a href="{{ url_for('logout') }}" class="btn btn-gold">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+</body>
+</html>
