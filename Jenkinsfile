@@ -2,20 +2,13 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'dairy-management'
+        IMAGE_NAME = "dairy-management"
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Clone Repository') {
             steps {
-                git 'https://github.com/your-username/your-repo.git'  // Replace with your repo
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                sh 'python -m pip install --upgrade pip'
-                sh 'pip install -r requirements.txt'
+                git 'https://github.com/AnjanC18/DairyProject.git' // replace with your repo if needed
             }
         }
 
@@ -25,23 +18,23 @@ pipeline {
             }
         }
 
-        stage('Run Container') {
+        stage('Run Docker Container') {
             steps {
-                sh 'docker run -d -p 5000:5000 --name flask_app $IMAGE_NAME'
+                sh 'docker run -d -p 5000:5000 --name dairy-app $IMAGE_NAME'
             }
         }
 
-        stage('Test App') {
+        stage('Test Health Check') {
             steps {
-                echo "You can add integration or health check tests here."
+                sh 'curl --retry 5 --retry-connrefused http://localhost:5000'
             }
         }
     }
 
     post {
         always {
-            echo 'Cleaning up...'
-            sh 'docker rm -f flask_app || true'
+            echo 'Cleaning up containers...'
+            sh 'docker rm -f dairy-app || true'
         }
     }
 }
