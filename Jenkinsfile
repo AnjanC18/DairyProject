@@ -1,28 +1,29 @@
 pipeline {
     agent any
 
-    stages {
-        stage('Clone Repository') {
-            steps {
-                git 'https://github.com/AnjanaGowdaC/DairyManagment.git'
-            }
-        }
+    environment {
+        IMAGE_NAME = "dairy-management"
+    }
 
+    stages {
         stage('Build Docker Image') {
             steps {
-                script {
-                    dockerImage = docker.build("dairy-management")
-                }
+                echo '🔨 Building Docker image...'
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Run Flask App in Foreground') {
             steps {
-                script {
-                    // Run the container in detached mode (-d)
-                    sh 'docker run -d -p 5000:5000 dairy-management'
-                }
+                echo '🚀 Running Flask app — output below will look just like VS Code...'
+                sh 'docker run --rm -p 5000:5000 $IMAGE_NAME'
             }
+        }
+    }
+
+    post {
+        always {
+            echo '✅ Build finished. Visit http://localhost:5000 while it’s running.'
         }
     }
 }
