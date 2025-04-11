@@ -9,13 +9,6 @@ pipeline {
     }
 
     stages {
-        stage('📦 Clone Repo') {
-            steps {
-                echo 'Cloning the repository...'
-                git 'https://github.com/AnjanC18/DairyProject.git'
-            }
-        }
-
         stage('🐳 Build Docker Image') {
             steps {
                 echo "Building Docker image: ${IMAGE_NAME}"
