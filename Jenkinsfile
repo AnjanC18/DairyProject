@@ -3,9 +3,18 @@ pipeline {
 
     environment {
         IMAGE_NAME = "dairy-management"
+        REPO_URL = "https://github.com/AnjanC18/DairyProject"
+        BRANCH_NAME = "main"
     }
 
     stages {
+        stage('Checkout Source Code') {
+            steps {
+                echo '📥 Cloning repository...'
+                git url: "${REPO_URL}", branch: "${BRANCH_NAME}"
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 echo '🔨 Building Docker image...'
