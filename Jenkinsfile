@@ -3,15 +3,15 @@ pipeline {
 
     environment {
         IMAGE_NAME = "dairy-management"
-        REPO_URL = "https://github.com/AnjanC18/DairyProject"
-        BRANCH_NAME = "main"
+        CONTAINER_NAME = "dairy-management-container"
+        APP_PORT = "5000"
     }
 
     stages {
-        stage('Checkout Source Code') {
+        stage('Clone Repository') {
             steps {
                 echo '📥 Cloning repository...'
-                git url: "${REPO_URL}", branch: "${BRANCH_NAME}"
+                git url: 'https://github.com/AnjanC18/DairyProject', branch: 'main'
             }
         }
 
@@ -22,17 +22,32 @@ pipeline {
             }
         }
 
-        stage('Run Flask App in Foreground') {
+        stage('Stop Previous Container') {
             steps {
-                echo '🚀 Running Flask app — output below will look just like VS Code...'
-                sh 'docker run --rm -p 5000:5000 $IMAGE_NAME'
+                echo '🧹 Cleaning up old containers...'
+                sh """
+                docker stop $CONTAINER_NAME || true
+                docker rm $CONTAINER_NAME || true
+                """
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                echo '🚀 Running Docker container...'
+                sh """
+                docker run -d --name $CONTAINER_NAME -p $APP_PORT:5000 $IMAGE_NAME
+                """
             }
         }
     }
 
     post {
-        always {
-            echo '✅ Build finished. Visit http://localhost:5000 while it’s running.'
+        success {
+            echo "✅ Build successful! App is running at http://localhost:$APP_PORT"
+        }
+        failure {
+            echo "❌ Build failed. Check the console output for errors."
         }
     }
 }

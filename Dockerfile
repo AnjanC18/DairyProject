@@ -1,21 +1,24 @@
-FROM python:3.9.18-slim-bullseye
+# Use an official Python image as base
+FROM python:3.10-slim
 
+# Set working directory
 WORKDIR /app
 
-# Copy only requirement file first to use Docker layer cache
+# Copy dependency file
 COPY requirements.txt .
 
-# Install system + Python dependencies
-RUN apt-get update && apt-get install -y \
-    gcc libffi-dev libfreetype6-dev libjpeg-dev zlib1g-dev \
-    python3-dev build-essential \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# THEN copy the rest of the app
+# Copy the rest of your app
 COPY . .
 
+# Expose the port your Flask app runs on
 EXPOSE 5000
 
-CMD ["python", "app.py"]
+# Set environment variables
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
+
+# Run the application
+CMD ["flask", "run"]
