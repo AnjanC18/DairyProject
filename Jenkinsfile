@@ -3,37 +3,53 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'dairy-management'
-        CONTAINER_NAME = 'dairy-app'
-        HOST_PORT = '5001'
+        CONTAINER_NAME = 'dairy-prod-5018'
+        HOST_PORT = '5018'
         CONTAINER_PORT = '5000'
     }
 
     stages {
-        stage('🐳 Build Docker Image') {
+        stage('Clone Repo') {
             steps {
-                echo "Building Docker image: ${IMAGE_NAME}"
-                sh "docker build -t ${IMAGE_NAME} ."
+                echo 'Cloning repository...'
+                // Jenkins will clone the repo automatically if using pipeline from SCM
             }
         }
 
-        stage('🧼 Stop Previous Container') {
+        stage('Build Docker Image') {
             steps {
-                echo "Removing old container if it exists..."
-                sh "docker rm -f ${CONTAINER_NAME} || true"
+                script {
+                    sh "docker build -t $IMAGE_NAME ."
+                }
             }
         }
 
-        stage('🚀 Run Docker Container') {
+        stage('Stop & Remove Old Container') {
             steps {
-                echo "Running container on port ${HOST_PORT}..."
-                sh "docker run -d -p ${HOST_PORT}:${CONTAINER_PORT} --name ${CONTAINER_NAME} ${IMAGE_NAME}"
+                script {
+                    sh "docker stop $CONTAINER_NAME || true"
+                    sh "docker rm $CONTAINER_NAME || true"
+                }
+            }
+        }
+
+        stage('Run Container on Port 5018') {
+            steps {
+                script {
+                    sh """
+                        docker run -d \
+                        --name $CONTAINER_NAME \
+                        -p $HOST_PORT:$CONTAINER_PORT \
+                        $IMAGE_NAME
+                    """
+                }
             }
         }
     }
 
     post {
         always {
-            echo '🎯 Pipeline completed.'
+            echo 'Pipeline completed.'
         }
     }
 }
